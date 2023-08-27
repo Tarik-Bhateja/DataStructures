@@ -1,0 +1,171 @@
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+class Node{
+public:
+int data;
+Node* left;
+Node* right;
+
+Node(int data)
+{
+    this->data=data;
+    this->left=NULL;
+    this->right=NULL;
+}
+
+};
+
+void levelOrder(Node* root)
+{
+    if(root==NULL)
+    {
+        return;
+    }
+
+    queue<Node*> q;
+    q.push(root);
+    q.push(NULL);
+
+    while(q.size()!=0)
+    {
+        Node* frontNode=q.front();
+        q.pop();
+
+        if(frontNode==NULL)
+        {
+            cout<<endl;
+            if(q.size()!=0)
+            {
+                q.push(NULL);
+            }
+        }
+
+        else
+        {
+            cout<<frontNode->data<<" ";
+            if(frontNode->left)
+            {
+                q.push(frontNode->left);
+            }
+            if(frontNode->right)
+            {
+                q.push(frontNode->right);
+            }
+        }
+
+    }
+}
+
+Node* minVal(Node* root)
+{
+    Node* temp=root;
+
+    while(temp->left!=NULL)
+    {
+        temp=temp->left;
+    }
+
+    return temp;
+}
+
+Node* deleteBst(Node* root,int data)
+{
+    if(root->data==data)
+    {
+        //0Child
+     if(root->left==NULL && root->right==NULL)
+     {
+         delete root;
+         return NULL;
+     }
+
+     //1Child
+     if(root->left!=NULL && root->right==NULL)
+     {
+         Node* temp=root->left;
+         delete root;
+         return temp;
+     }
+
+      if(root->left==NULL && root->right!=NULL)
+     {
+         Node* temp=root->right;
+         delete root;
+         return temp;
+     }
+
+     //2Child
+     if(root->left!=NULL && root->right!=NULL)
+     {
+       int mini=minVal(root->right)->data;
+       root->data=mini;
+       root->right=deleteBst(root->right,mini);
+       return root;
+     }
+    }
+
+    else if(root->data>data)
+    {
+        root->left=deleteBst(root->left,data);
+        return root;
+    }
+    else
+    {
+        root->right=deleteBst(root->right,data);
+        return root;
+    }
+
+    return root;
+}
+
+Node*  insertIntoBst(Node* &root,int data)
+{
+if(root==NULL)
+{
+    root=new Node(data);
+    return root;
+}
+
+if(data>root->data)
+{
+    root->right=insertIntoBst(root->right,data);
+}
+
+else
+{
+    root->left=insertIntoBst(root->left,data);
+}
+
+return root;
+
+
+}
+
+
+
+void takeInput(Node* &root)
+{
+    int data;
+    cin>>data;
+    
+    while(data!=-1)
+    {
+        root=insertIntoBst(root,data);
+        cin>>data;
+    }
+}
+int main() {
+
+    Node* root=NULL;
+    cout<<"Enter Data to Create a BST"<<endl;
+    takeInput(root);
+    levelOrder(root);
+    int val;
+    cout<<"Enter Data To Delete"<<endl;
+    cin>>val;
+    deleteBst(root,val);
+    levelOrder(root);
+   
+}
